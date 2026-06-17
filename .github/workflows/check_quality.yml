@@ -1,0 +1,11 @@
+name: check quality workflow
+on:
+  pull_request
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: install rust
+        run: apt install rustup
+      - name: check code
+        run: cargo check
