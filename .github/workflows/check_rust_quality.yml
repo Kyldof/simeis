@@ -1,8 +1,8 @@
-name: check quality
+name: check rust quality 
 on:
   pull_request
 jobs:
-  check_quality:
+  rust_quality:
     runs-on: ubuntu-latest
     steps:
       - name: checkout code                                                                                                  
