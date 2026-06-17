@@ -1,0 +1,17 @@
+name: check PR name
+on: pull_request
+jobs:
+  check-base:
+    runs-on: ubuntu-latest
+    steps:
+      - name: features branches must target main
+        run: |
+          if [[ "${{github.head_ref}}" == feature* && "${{github.base_ref}}" != "main" || "${{github.base_ref}}" != "bug/*"]]; then
+          echo "::error::nom de branche incorrect"
+          exit 1
+          fi
+      - name: close on failure
+        if: failure()
+        uses: superbrothers/close-pull-request@v3
+        with:
+            comment: "ton nom de PR est horrible, change moi ça"
