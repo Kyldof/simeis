@@ -1,14 +1,17 @@
 name: check PR name
-on: pull_request
+on: 
+    pull_request_target:
+        types: [opened]
 jobs:
   check-base:
     runs-on: ubuntu-latest
     steps:
       - name: features branches must target main
         run: |
-          if [[ "${{github.head_ref}}" == feature* && "${{github.base_ref}}" != "main" || "${{github.base_ref}}" != "bug/*"]]; then
-          echo "::error::nom de branche incorrect"
-          exit 1
+          if [[ ( "${{ github.head_ref }}" == feature* || "${{ github.head_ref }}" == bug/* ) \
+            && "${{ github.base_ref }}" != "main" ]]; then
+            echo "::error::nom de branche incorrect"
+            exit 1
           fi
       - name: close on failure
         if: failure()
