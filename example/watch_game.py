@@ -1,11 +1,11 @@
-PORT=8080
-URL=f"http://212.147.229.70:{PORT}"
-
 import sys
 import os
 import json
 import time
 import urllib.request
+
+PORT = 8080
+URL = f"http://212.147.229.70:{PORT}"
 
 if len(sys.argv) > 1:
     PLAYERS = sys.argv[1:]
@@ -15,17 +15,20 @@ else:
 INIT = False
 HIST = {}
 
+
 class SimeisError(Exception):
     pass
 
-NMAX=30
-WIDTH=100
-SCORE="█"
-POTENTIAL="▒"
-VOID=" "
+
+NMAX = 30
+WIDTH = 100
+SCORE = "█"
+POTENTIAL = "▒"
+VOID = " "
 
 MIN = {}
 MAX = {}
+
 
 def mkbar(score, pot, maxs):
     if maxs == 0.0:
@@ -39,6 +42,7 @@ def mkbar(score, pot, maxs):
     nvoid = WIDTH - nbs - nbp
     return (SCORE * nbs) + (POTENTIAL * nbp) + (VOID * nvoid)
 
+
 def get(path):
     qry = f"{URL}/{path}"
     while True:
@@ -47,8 +51,6 @@ def get(path):
             break
         except Exception as err:
             os.system("clear")
-            HIST = {}
-            INIT=False
             # breakpoint()
             print("DEAD SERVER")
             print(err)
@@ -62,18 +64,21 @@ def get(path):
 
     return data
 
+
 def get_info():
     return get("gamestats")
+
 
 def get_resources():
     return get("resources")
 
+
 def get_market():
     return get("market/prices")
 
+
 def disp_market(resources):
     market = get_market()
-    max_res_len = max([len(k) for k in market.keys()])
     disp = {}
     for (res, price) in market.items():
         if price is None or price < 0:
@@ -82,12 +87,13 @@ def disp_market(resources):
         MAX[res] = round(max(MAX[res], price), 2)
         relp = round((price / resources[res]["base-price"]) * 100, 2)
         price = round(price, 3)
-        space = " "*(1 + max_res_len - len(res))
 
         disp[res] = {
             "head": f"{price}",
             "mid": f"({relp} %)",
-            "tail": "({} < {} < {})".format(MIN[res], resources[res]["base-price"], MAX[res]),
+            "tail": "({} < {} < {})".format(
+                MIN[res], resources[res]["base-price"], MAX[res]
+            ),
         }
 
     max_res = max([len(r) for r in disp.keys()])
@@ -97,7 +103,7 @@ def disp_market(resources):
 
     buffer = ""
     for res, d in disp.items():
-        buffer += "{}{}{}{}{}{}{}".format(
+        buffer += "{}{}{}{}{}{}{}{}".format(
             res, " " * (max_res + 1 - len(res)),
             d["head"], " " * (max_head + 1 - len(d["head"])),
             d["mid"], " " * (max_mid + 1 - len(d["mid"])),
@@ -105,6 +111,7 @@ def disp_market(resources):
         ) + "\n"
 
     return buffer
+
 
 resources = get_resources()
 for (res, data) in resources.items():
@@ -127,10 +134,18 @@ while True:
             p["score"] = -1.0
             p["potential"] = -1.0
 
-    buffer += "{} Players still in the game ".format(len([True for p in info.values() if not p["lost"]]))
-    buffer += "({} players lost)\n".format(len([True for p in info.values() if p["lost"]]))
-    players = sorted(info.items(), key=lambda p: p[1]["score"] + p[1]["potential"], reverse=True)[:NMAX]
-    max_score = max([max(v["score"], 0) + v["potential"] for v in info.values()])
+    nb_playing = len([True for p in info.values() if not p["lost"]])
+    buffer += "{} Players still in the game ".format(nb_playing)
+    nb_lost = len([True for p in info.values() if p["lost"]])
+    buffer += "({} players lost)\n".format(nb_lost)
+    players = sorted(
+        info.items(),
+        key=lambda p: p[1]["score"] + p[1]["potential"],
+        reverse=True,
+    )[:NMAX]
+    max_score = max(
+        [max(v["score"], 0) + v["potential"] for v in info.values()]
+    )
     maxn = max([len(data["name"]) for (_, data) in players])
     for (player, data) in players:
         if PLAYERS is not None and data["name"] not in PLAYERS:
@@ -140,7 +155,8 @@ while True:
 
         spaces = maxn - len(data["name"]) + 1
         if data["lost"]:
-            buffer += "Player {} LOST".format(data["name"] + " " * spaces) + "\n"
+            buffer += "Player {} LOST".format(
+                data["name"] + " " * spaces) + "\n"
             continue
 
         s = max(0, data["score"]) + data["potential"]
