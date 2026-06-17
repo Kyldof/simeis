@@ -33,25 +33,13 @@ def get_dist(a, b):
 
 
 def addition():
-    x = random.randrange(0, 10000)
-    y = random.randrange(0, 10000)
-    z = random.randrange(0, 10000)
-
     # Exercice:    Tester les additions
+    pass
 
 
 def distance():
-    x1 = random.randrange(-100, 100)
-    y1 = random.randrange(-100, 100)
-    z1 = random.randrange(-100, 100)
-    a = (x1, y1, z1)
-
-    x2 = random.randrange(-100, 100)
-    y2 = random.randrange(-100, 100)
-    z2 = random.randrange(-100, 100)
-    b = (x2, y2, z2)
-
     # Exercice:     Tester la distance entre le point A et le point B
+    pass
 
 
 create_property_based_test(addition, time_test=3)
