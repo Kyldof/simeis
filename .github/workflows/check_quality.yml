@@ -13,4 +13,6 @@ jobs:
         run: cargo check
       - name: verify format code 
         run: cargo fmt --check
+      - name: verify schema
+        run: cargo clippy
       
