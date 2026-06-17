@@ -10,11 +10,11 @@ jobs:
         run: |
           if [[ ( "${{ github.head_ref }}" == feature* || "${{ github.head_ref }}" == bug/* ) \
             && "${{ github.base_ref }}" != "main" ]]; then
-            echo "::error::nom de branche incorrect"
+            echo "::error::la branche cible dois être 'main' pour ce type de PR"
             exit 1
           fi
       - name: close on failure
         if: failure()
         uses: superbrothers/close-pull-request@v3
         with:
-            comment: "ton nom de PR est horrible, change moi ça"
+            comment: "pas la bonne branche cible"
