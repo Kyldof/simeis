@@ -14,5 +14,5 @@ jobs:
       - name: verify format code 
         run: cargo fmt --check
       - name: verify schema
-        run: cargo clippy
+        run: cargo clippy -- -D clippy::all
       
