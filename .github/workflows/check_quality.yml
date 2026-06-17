@@ -1,13 +1,16 @@
-name: check quality workflow
+name: check quality
 on:
   pull_request
 jobs:
-  check:
+  check_quality:
     runs-on: ubuntu-latest
     steps:
       - name: checkout code                                                                                                  
         uses: actions/checkout@v4  
       - name: install rust
         run: sudo apt update && sudo apt install rustup
-      - name: check code
+      - name: check compile
         run: cargo check
+      - name: verify format code 
+        run: cargo fmt --check
+      
