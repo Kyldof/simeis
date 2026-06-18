@@ -1,0 +1,60 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  docker-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: .github/Dockerfile
+          load: true
+          tags: simeis:${{ github.ref_name }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Test container
+        run: |
+          docker run -d -p 8080:8080 --name simeis simeis:${{ github.ref_name }}
+          sleep 5
+          curl --fail http://localhost:8080/ping
+          docker stop simeis
+          docker rm simeis
+
+      - name: Save image archive
+        run: docker image save simeis:${{ github.ref_name }} -o simeis-${{ github.ref_name }}.tar
+
+      - name: Upload image as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: simeis-docker-image
+          path: simeis-${{ github.ref_name }}.tar
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push to DockerHub
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: .github/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/simeis:${{ github.ref_name }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/simeis:latest
+          cache-from: type=gha
