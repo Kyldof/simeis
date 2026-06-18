@@ -1,9 +1,8 @@
-name: release
+name: Release DockerHub
 
 on:
-  push:
-    tags:
-      - 'v*'
+  release:
+    types: [published]
 
 jobs:
   docker-release:
@@ -23,7 +22,7 @@ jobs:
           load: true
           tags: simeis:${{ github.ref_name }}
           cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-to: type=gha
 
       - name: Test container
         run: |
