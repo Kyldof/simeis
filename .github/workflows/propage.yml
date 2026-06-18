@@ -1,11 +1,10 @@
 name: propage changement
 on:
-  pull_request_target :
-    branches:
-     - 'bug/**'
+  pull_request:
 jobs:
   echo_test:
     runs-on: ubuntu-latest
+    if: startsWith(github.head_ref, 'bug/**')
     steps:
       - name: echo test for test
         run: echo "test"
