@@ -1,0 +1,10 @@
+name: "Setup rust"
+description: "Checkout du code et installation de rust"
+runs:
+  using: "composite"
+  steps:
+    - name: checkout code
+      uses: actions/checkout@v4
+    - name: install rust
+      run: sudo apt update && sudo apt install -y rustup
+      shell: bash
