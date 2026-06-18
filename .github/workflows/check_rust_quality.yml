@@ -5,28 +5,19 @@ jobs:
   rust_check:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout code                                                                                                  
-        uses: actions/checkout@v4  
-      - name: install rust
-        run: sudo apt update && sudo apt install rustup
+      - uses: ./.github/actions/setup-rust
       - name: check compile
         run: cargo check
   rust_format:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout code                                                                                                  
-        uses: actions/checkout@v4  
-      - name: install rust
-        run: sudo apt update && sudo apt install rustup
+      - uses: ./.github/actions/setup-rust
       - name: verify format code 
         run: cargo fmt --check
   rust_lint:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout code                                                                                                  
-        uses: actions/checkout@v4  
-      - name: install rust
-        run: sudo apt update && sudo apt install rustup
+      - uses: ./.github/actions/setup-rust
       - name: verify schema
         run: cargo clippy -- -D clippy::all
       
