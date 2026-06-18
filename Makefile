@@ -16,7 +16,7 @@ else
 	BINARY := target/release/simeis-server
 endif
 
-# Compile en release et supprime les symboles de debug pour alléger le binaire
+# Compile en release et supprime les symboles de debug pour alléger le binaire oui
 release:
 	cargo build --release
 	$(STRIP) $(BINARY)
