@@ -4,7 +4,7 @@ on:
 jobs:
   echo_test:
     runs-on: ubuntu-latest
-    if: startsWith(github.head_ref, 'bug/**')
+    if: startsWith(github.base_ref, 'bug/**')
     steps:
       - name: echo test for test
         run: echo "test"
