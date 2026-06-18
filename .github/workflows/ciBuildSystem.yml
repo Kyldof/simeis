@@ -8,6 +8,7 @@ on:
 jobs:
   # Si la PR est fusionnee dans main (declenche un push sur main)
   construire-publier-et-documenter:
+    if: "github.ref == 'refs/heads/main' && github.event_name == 'push'"
     runs-on: ubuntu-latest
 
     steps:
@@ -39,6 +40,7 @@ jobs:
 
   # Reste du temps (branches de dev, PR ouvertes...)
   verification-et-tests:
+    if: "!(github.ref == 'refs/heads/main' && github.event_name == 'push')"
     runs-on: ubuntu-latest
 
     steps:
