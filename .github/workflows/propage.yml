@@ -2,6 +2,11 @@ name: propage changement
 on:
   pull_request:
 jobs:
+  echo_base_head:
+    runs-on : ubuntu-latest
+    steps:
+        - name: echo base and head github
+          run: "echo head :/ ${{github.head_ref}}/t base :/ ${{github.base_ref}}"
   echo_test:
     runs-on: ubuntu-latest
     if: startsWith(github.base_ref, 'bug/**')
