@@ -2,6 +2,7 @@ import sys
 import time
 from sdk import SimeisSDK
 
+
 class Game:
     def __init__(self, username, ip, port):
         self.sdk = SimeisSDK(username, ip, port)
@@ -10,7 +11,8 @@ class Game:
         status = self.sdk.get_player_status()
         sta = status["stations"][0]
 
-        # On a besoin de savoir quelle planète miner pour équiper notre vaisseau
+        # On a besoin de savoir quelle planète miner pour équiper notre
+        # vaisseau
         nearest_planet = self.sdk.scan_planets(sta)[0]
         print("Targeting planet", nearest_planet)
 
@@ -24,7 +26,8 @@ class Game:
             ship = all_ships[0]
             self.sdk.buy_ship(sta, ship["id"])
 
-            # En fonction de la planète, on achète un module de minage différent
+            # En fonction de la planète, on achète un module de minage
+            # différent
             if nearest_planet["solid"]:
                 mod = "Miner"
             else:
@@ -33,7 +36,8 @@ class Game:
 
             # On embauche du personnel
             operator = self.sdk.hire_crew(sta, "operator")
-            self.sdk.assign_crew_to_ship(sta, ship["id"], operator["id"], mod["id"])
+            self.sdk.assign_crew_to_ship(
+                sta, ship["id"], operator["id"], mod["id"])
 
             pilot = self.sdk.hire_crew(sta, "pilot")
             self.sdk.assign_crew_to_ship(sta, ship["id"], pilot["id"], "pilot")
@@ -55,9 +59,13 @@ class Game:
         #     On vends les resources
         while True:
             status = self.sdk.get_player_status()
-            print("Current status: {} credits, costs: {}, time left before lost: {} secs".format(
-                round(status["money"], 2), round(status["costs"], 2), int(status["money"] / status["costs"]),
-            ))
+            money = round(status["money"], 2)
+            costs = round(status["costs"], 2)
+            left = int(status["money"] / status["costs"])
+            print(
+                "Current status: {} credits, costs: {}, "
+                "time left before lost: {} secs".format(money, costs, left)
+            )
             if status["money"] <= 0:
                 print("You lost")
                 return
@@ -86,27 +94,40 @@ class Game:
             # On vends tout
             cycletot = 0
             for res, amnt in self.sdk.get_station_resources(sta).items():
-                if res in [ "Fuel", "Hull" ]:
+                if res in ["Fuel", "Hull"]:
                     continue
                 got = self.sdk.sell_resource(sta, res, amnt)
-                print("Sold", amnt, "of", res, "for", got["added_money"], "credits (fees", got["fees"], "credits)")
+                print(
+                    "Sold", amnt, "of", res,
+                    "for", got["added_money"],
+                    "credits (fees", got["fees"], "credits)",
+                )
                 cycletot += got["added_money"]
 
             # On achète du carburant et on fait le plein
             got = self.sdk.buy_fuel_for_refuel(sta, ship["id"])
             cycletot -= got["removed_money"]
-            print("Bought", got["added_cargo"], "of Fuel for", got["removed_money"], "credits (fees", got["fees"], "credits)")
+            print(
+                "Bought", got["added_cargo"], "of Fuel for",
+                got["removed_money"], "credits (fees", got["fees"],
+                "credits)",
+            )
             self.sdk.refuel_ship(sta, ship["id"])
 
             # On achète des plaques de coque, et on répare la coque
             got = self.sdk.buy_hull_for_repair(sta, ship["id"])
             cycletot -= got["removed_money"]
-            print("Bought", got["added_cargo"], "of Hull for", got["removed_money"], "credits (fees", got["fees"], "credits)")
+            print(
+                "Bought", got["added_cargo"], "of Hull for",
+                got["removed_money"], "credits (fees", got["fees"],
+                "credits)",
+            )
             self.sdk.repair_ship(sta, ship["id"])
 
             # Rebelotte
             print("Total this cycle:", cycletot)
             print("")
+
 
 if __name__ == "__main__":
     if len(sys.argv[1:]) < 3:
