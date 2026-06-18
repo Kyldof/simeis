@@ -8,11 +8,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - uses: ./.github/actions/setup-rust
+        - name: install cargot audit
+          run:  cargo install cargo-audit
         - name: cargot audit
           run: cargot-audit
   audit-dep:
     runs-on: ubuntu-latest
     steps:
         - uses: ./.github/actions/setup-rust
+        - name: install cargot udeps
+          run:  cargo install cargo-udeps
         - name: cargo-udeps
           run: cargo-udeps
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: ./.github/actions/setup-rust
+        - name: cargo test (heavy-testing)
+          run: cargo test --workspace --features heavy-testing
