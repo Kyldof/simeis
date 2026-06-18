@@ -19,3 +19,5 @@ mea = { workspace = true }
 default = []
 testing = []
 extraspeed = []
+# Inutile pour l'instant : feature réservée pour des tests lourds à venir
+heavy-testing = []

@@ -1,5 +1,6 @@
 FROM rust:1.88.0-bookworm AS builder
 
+
 WORKDIR /app
 
 COPY . .

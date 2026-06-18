@@ -1,0 +1,122 @@
+name: Build Optimisé
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        run: |
+          rustup toolchain install stable
+          rustup default stable
+          rustup component add clippy
+
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/bin
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - run: cargo clippy -- -D clippy::all
+
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        run: |
+          rustup toolchain install stable
+          rustup default stable
+          rustup component add rustfmt
+
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/bin
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - run: cargo fmt --check
+
+  build-release:
+    needs: [check, lint]
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: true
+
+      matrix:
+        rust: ["1.88.0", "1.92.0", "1.95.0"]
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        run: |
+          rustup toolchain install ${{ matrix.rust }}
+          rustup default ${{ matrix.rust }}
+
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/bin
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            target
+          key: ${{ runner.os }}-${{ matrix.rust }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - run: cargo build --release
+
+  tests:
+    needs: build-release
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        run: |
+          rustup toolchain install stable
+          rustup default stable
+
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/bin
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - run: cargo test --all
