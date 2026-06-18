@@ -1,0 +1,18 @@
+name: advanced analyse
+on:
+  push:
+    branches: 
+      - "release/**"
+jobs:
+  audit-secu:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: ./.github/actions/setup-rust
+        - name: cargot audit
+          run: cargot-audit
+  audit-dep:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: ./.github/actions/setup-rust
+        - name: cargo-udeps
+          run: cargo-udeps
