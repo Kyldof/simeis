@@ -1,0 +1,36 @@
+name: diyDependabot
+
+# Se lance toutes les 30 min automatiquement, ou manuellement depuis GitHub
+on:
+    schedule:
+        - cron: "*/30 * * * *"
+    workflow_dispatch:
+
+jobs:
+    # Met à jour les dépendances Rust et crée une PR si y'a des changements
+    Mise-a-jour-des-dependances:
+        runs-on: ubuntu-latest
+
+        steps:
+            # Récupère le code du dépôt
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            # Installe Rust pour pouvoir utiliser cargo
+            - name: Install Rust
+              uses: dtolnay/rust-toolchain@stable
+
+            # Met à jour le Cargo.lock avec les dernières versions dispo
+            - name: Run cargo update
+              run: cargo update
+
+            # Si Cargo.lock a changé, crée une PR avec le label bot/update
+            - name: Create Pull Request
+              uses: peter-evans/create-pull-request@v6
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  commit-message: "update cargo dependencies"
+                  title: "update cargo dependencies"
+                  body: "Ceci est une Pull Request automatique Pour update les dépendances du projet"
+                  branch: "diy-dependabot/update-deps"
+                  labels: "bot/update"

@@ -1,4 +1,4 @@
-name: CI
+name: ciBuildSystem
 
 on:
   push:
@@ -6,9 +6,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  # PR cible main -> compile release + doc
-  build-release-and-doc:
-    if: "(github.event_name == 'pull_request' && github.base_ref == 'main') || github.event_name == 'workflow_dispatch'"
+  # Si la PR est fusionnee dans main (declenche un push sur main)
+  construire-publier-et-documenter:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
@@ -27,7 +27,6 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-release-${{ hashFiles('**/Cargo.lock') }}
 
-      # Typst pour generer le pdf (ajout de sudo pour éviter les erreurs de permission)
       - name: Install Typst
         run: |
           curl -L https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz \
@@ -39,20 +38,12 @@ jobs:
       - name: Build doc
         run: make doc
 
-  # Autres cas -> check clippy + tests unitaires
-  check-and-test:
-    if: "!(github.event_name == 'pull_request' && github.base_ref == 'main') || github.event_name == 'workflow_dispatch'"
+  # Reste du temps (branches de dev, PR ouvertes...)
+  verification-et-tests:
+    if: !(github.ref == 'refs/heads/main' && github.event_name == 'push')
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: clippy, rustfmt
-
       - name: Cache cargo deps
         uses: actions/cache@v4
         with:
