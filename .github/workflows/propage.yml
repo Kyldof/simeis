@@ -9,7 +9,7 @@ jobs:
           run: "echo head :/ ${{github.head_ref}}/t base :/ ${{github.base_ref}}"
   echo_test:
     runs-on: ubuntu-latest
-    if: startsWith(github.base_ref, 'bug/**')
+    if: startsWith(github.head_ref, 'bug/**')
     steps:
       - name: echo test for test
         run: echo "test"
