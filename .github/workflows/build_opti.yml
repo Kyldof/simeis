@@ -93,6 +93,7 @@ jobs:
             ~/.cargo/git/db
             target
           key: ${{ runner.os }}-${{ matrix.rust }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
 
       - run: cargo build --release
 
