@@ -1,0 +1,11 @@
+name: propage changement
+on:
+  pull_request_target :
+    branches:
+     - 'bug/**'
+jobs:
+  echo_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: echo test for test
+        run: echo "test"
