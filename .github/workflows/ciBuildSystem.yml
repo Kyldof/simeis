@@ -3,13 +3,12 @@ name: CI
 on:
   push:
   pull_request:
-  workflow_dispatch: # Permet de lancer le workflow manuellement depuis l'interface GitHub
+  workflow_dispatch:
 
 jobs:
   # PR cible main -> compile release + doc
   build-release-and-doc:
     # Temporairement commenté pour tester sur notre branche sans ouvrir de PR
-    # if: github.event_name == 'pull_request' && github.base_ref == 'main'
     runs-on: ubuntu-latest
 
     steps:
@@ -43,7 +42,6 @@ jobs:
   # Autres cas -> check clippy + tests unitaires
   check-and-test:
     # Temporairement commenté pour tester les deux jobs en même temps
-    # if: "!(github.event_name == 'pull_request' && github.base_ref == 'main')"
     runs-on: ubuntu-latest
 
     steps:
@@ -69,4 +67,3 @@ jobs:
 
       - name: Run tests
         run: make test
-
