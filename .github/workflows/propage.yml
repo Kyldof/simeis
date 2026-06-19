@@ -2,6 +2,8 @@ name: propage changement
 on:
   pull_request:
     # types: [closed]
+permissions:
+  pull-requests: write
 jobs:
   echo_test_information:
     runs-on : ubuntu-latest
@@ -18,13 +20,17 @@ jobs:
     steps:
       - name: echo test for test
         env:
+            HEAD_REF: ${{github.head_ref}}
             LABELS: ${{toJson(github.event.pull_request.labels.*.name)}}
         run: |
           TARGETS=$(echo "$LABELS" | jq -r '.[] | select(startswith("propagate:")) | ltrimstr("propagate:")')
 
           if [ -n "$TARGETS" ]; then
           echo "$TARGETS" | while read -r target; do
-            echo "target is $target"
+            gh pr create \
+              --base "$target" \
+              --head "$HEAD_REF" \
+              --title "$target" \
           done
 
          
