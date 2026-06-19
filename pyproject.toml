@@ -1,0 +1,13 @@
+[project]
+name = "simeis"
+version = "0.1.0"
+requires-python = ">=3.12"
+
+[dependency-groups]
+dev = [
+    "flake8",
+    "python-dotenv",
+]
+
+[tool.flake8]
+max-line-length = 120
