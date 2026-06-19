@@ -17,3 +17,4 @@ jobs:
           GH_REPO: ${{github.repository}}
         run: |
           Ligne_TODOs=$(grep -rohE 'TODO \(#[0-9]+\).*')
+          echo "$Ligne_TODOs"
