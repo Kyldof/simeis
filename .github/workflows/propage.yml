@@ -30,7 +30,7 @@ jobs:
             gh pr create \
               --base "$target" \
               --head "$HEAD_REF" \
-              --title "$target" \
+              --title "$target"
           done
 
          
