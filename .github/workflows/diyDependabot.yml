@@ -1,9 +1,9 @@
 name: diyDependabot
 
-# Se lance toutes les 30 min automatiquement, ou manuellement depuis GitHub schedule:    - cron: "*/30 * * * *"
+# Se lance tous les lundis à 10h UTC automatiquement, ou manuellement depuis GitHub
 on:
-  push:
-  pull_request:
+  schedule:
+    - cron: "0 10 * * 1"
   workflow_dispatch:
 
 jobs:
@@ -14,14 +14,26 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
       - name: Run cargo update
-        run: cargo update
+        id: cargo-update
+        run: |
+          cargo update 2>&1 | tee cargo-update.log
+          # cargo update --dry-run affiche "Updating ..." si des changements existent
+          # On detecte si Cargo.lock a ete modifie apres cargo update
+          if git diff --quiet Cargo.lock; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: Create Pull Request
+        if: steps.cargo-update.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -29,4 +41,5 @@ jobs:
           title: "update cargo dependencies"
           body: "Ceci est une Pull Request automatique Pour update les dépendances du projet"
           branch: "diy-dependabot/update-deps"
+          base: main
           labels: "bot/update"

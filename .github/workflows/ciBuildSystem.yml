@@ -1,14 +1,19 @@
 name: ciBuildSystem
 
 on:
-  push:
   pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
   # Si la PR est fusionnee dans main (declenche un push sur main)
   construire-publier-et-documenter:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout
@@ -40,6 +45,7 @@ jobs:
   # Reste du temps (branches de dev, PR ouvertes...)
   verification-et-tests:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
 
     steps:
       - name: Checkout
