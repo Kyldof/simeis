@@ -1,0 +1,28 @@
+# Propriétaires du code par zone
+# Assignés automatiquement en reviewer sur les PR qui touchent ces fichiers
+
+# Par défaut
+*                           @Kyldof
+
+# CI et build
+Makefile                    @Kyldof
+.github/                    @Kyldof
+
+# Serveur
+simeis-server/              @Kyldof
+
+# Données
+simeis-data/                @Kyldof
+
+# SDK
+sdk/                        @Kyldof
+
+# Documentation
+doc/                        @Kyldof
+
+# Tests
+tests/                      @Kyldof
+
+# Dépendances
+Cargo.toml                  @Kyldof
+Cargo.lock                  @Kyldof

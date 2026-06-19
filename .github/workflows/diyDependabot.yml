@@ -1,0 +1,54 @@
+name: diyDependabot
+
+# Tous les lundis à 10h UTC
+on:
+  schedule:
+    - cron: "0 10 * * 1"
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  Mise-a-jour-des-dependances:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Run cargo update
+        id: cargo-update
+        run: |
+          cargo update 2>&1 | tee cargo-update.log
+          if git diff --quiet Cargo.lock; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Pull Request
+        if: steps.cargo-update.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B diy-dependabot/update-deps
+          git add Cargo.lock
+          git commit -m "Mise à jour du cargo update"
+          git push origin diy-dependabot/update-deps --force
+          gh pr create \
+            --title "Mise à jour du cargo update" \
+            --body "Ceci est une Pull Request automatique pour mettre à jour les dépendances du projet." \
+            --base main \
+            --head diy-dependabot/update-deps \
+            --label "bot/update" \
+            || echo "PR déjà existante"
