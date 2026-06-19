@@ -22,3 +22,4 @@ jobs:
         run: |
          for label in $LABELS; do
             echo "toto is $label"
+         done
