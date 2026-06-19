@@ -26,11 +26,12 @@ jobs:
           TARGETS=$(echo "$LABELS" | jq -r '.[] | select(startswith("propagate:")) | ltrimstr("propagate:")')
 
           if [ -n "$TARGETS" ]; then
-          echo "$TARGETS" | while read -r target; do
-            gh pr create \
-              --base "$target" \
-              --head "$HEAD_REF" \
-              --title "$target"
-          done
+            echo "$TARGETS" | while read -r target; do
+              gh pr create \
+                --base "$target" \
+                --head "$HEAD_REF" \
+                --title "$target"
+            done
+          fi
 
          
