@@ -4,9 +4,8 @@ permissions:
   contents: write
 
 on:
-  push:
-    branches:
-      - "**"
+  release:
+    types: [published]
 
 jobs:
   main:
