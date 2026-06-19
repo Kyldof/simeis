@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+
+# Arrêter le service avant suppression
+if systemctl is-active --quiet simeis; then
+    systemctl stop simeis
+fi
+
+exit 0

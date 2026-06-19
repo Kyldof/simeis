@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+# Désactiver le service
+systemctl disable simeis || true
+
+# Supprimer l'utilisateur système
+if id -u simeis >/dev/null 2>&1; then
+    userdel simeis
+fi
+
+exit 0

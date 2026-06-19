@@ -1,0 +1,10 @@
+Package: simeis
+Version: 0.1.0
+Section: utils
+Priority: optional
+Architecture: amd64
+Depends: cmatrix
+Maintainer: Adrien Duval
+Description: Simeis game server
+  Simeis est un jeu piloté par API, écrit en Rust.
+  Ce paquet installe le serveur Simeis comme service systemd.

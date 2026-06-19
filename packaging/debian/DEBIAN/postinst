@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+
+# Créer l'utilisateur système simeis s'il n'existe pas
+if ! id -u simeis >/dev/null 2>&1; then
+    useradd -r -s /bin/false simeis
+fi
+
+# Donner les droits sur le binaire
+chown root:root /usr/bin/simeis
+chmod 755 /usr/bin/simeis
+
+# Installer la manpage
+gzip -f /usr/share/man/man1/simeis.1
+
+# Recharger systemd et activer le service
+systemctl daemon-reload
+systemctl enable simeis
+systemctl start simeis
+
+exit 0

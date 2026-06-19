@@ -1,0 +1,12 @@
+[Unit]
+Description=Simeis Game Server
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/simeis
+User=simeis
+Restart=on-failure
+WorkingDirectory=/usr/bin
+
+[Install]
+WantedBy=multi-user.target
