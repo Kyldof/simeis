@@ -11,13 +11,15 @@ on:
 jobs:
   main:
     runs-on: ubuntu-latest
+
     steps:
       - name: Acquire code
         uses: actions/checkout@v4
 
       - name: Install Rust
         run: |
-          sudo apt update && sudo apt install rustup
+          sudo apt update
+          sudo apt install -y rustup
           rustup toolchain install stable
 
       - name: Put commit hash/name in env variables
@@ -27,8 +29,39 @@ jobs:
           git log -1 --pretty=%B >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-      - name: Build project
-        run: cargo build --release
+      - name: Build Simeis binary
+        run: cargo build --release -p simeis-server
+
+      - name: Prepare Debian package structure
+        run: |
+          mkdir -p packaging/debian/usr/bin
+          mkdir -p packaging/debian/usr/share/man/man1
+          mkdir -p packaging/debian/etc/systemd/system
+          mkdir -p packaging/debian/DEBIAN
+
+          # Copier le binaire (simeis-server -> simeis)
+          cp target/release/simeis-server packaging/debian/usr/bin/simeis
+
+          # Copier les fichiers Debian
+          cp packaging_src/control packaging/debian/DEBIAN/control
+          cp packaging_src/postinst packaging/debian/DEBIAN/postinst
+          cp packaging_src/prerm packaging/debian/DEBIAN/prerm
+          cp packaging_src/postrm packaging/debian/DEBIAN/postrm
+          cp packaging_src/simeis.service packaging/debian/etc/systemd/system/simeis.service
+          cp packaging_src/simeis.1 packaging/debian/usr/share/man/man1/simeis.1
+
+          chmod 755 packaging/debian/DEBIAN/postinst
+          chmod 755 packaging/debian/DEBIAN/prerm
+          chmod 755 packaging/debian/DEBIAN/postrm
+
+      - name: Build Debian package
+        run: dpkg-deb --build packaging/debian simeis.deb
+
+      - name: Upload Debian package
+        uses: actions/upload-artifact@v4
+        with:
+          name: simeis-debian
+          path: simeis.deb
 
       - name: Release the new binaries
         uses: mini-bomba/create-github-release@v1.1.3
@@ -39,13 +72,4 @@ jobs:
           name: "Latest Commit That Compiles"
           body: |
             Built from commit ${{ env.GIT_HASH }}
-            Triggered by @${{ github.actor }}
-
-            Workflow:
-            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-            Commit message:
-            ${{ env.GIT_MESSAGE }}
-          files: |
-            target/release/simeis-data.exe
-          clear_attachments: true
+          files: simeis.deb
