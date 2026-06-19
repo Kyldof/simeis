@@ -7,6 +7,10 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   # Met à jour les dépendances Rust et crée une PR si y'a des changements
   Mise-a-jour-des-dependances:
@@ -14,18 +18,17 @@ jobs:
 
     steps:
       - name: Checkout repository
-        run: git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git . && git checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Install Rust
-        run: |
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Run cargo update
         id: cargo-update
         run: |
           cargo update 2>&1 | tee cargo-update.log
-          # cargo update --dry-run affiche "Updating ..." si des changements existent
           # On detecte si Cargo.lock a ete modifie apres cargo update
           if git diff --quiet Cargo.lock; then
             echo "has_changes=false" >> $GITHUB_OUTPUT
