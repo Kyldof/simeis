@@ -22,8 +22,9 @@ jobs:
         run: |
           TARGETS=$(echo "$LABELS" | jq -r '.[] | select(startswith("propagate:")) | ltrimstr("propagate:")')
 
+          if [ -n "$TARGETS" ]; then
           echo "$TARGETS" | while read -r target; do
             echo "target is $target"
           done
-          
+
          
