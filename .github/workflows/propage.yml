@@ -19,5 +19,11 @@ jobs:
       - name: echo test for test
         env:
             LABELS: ${{toJson(github.event.pull_request.labels.*.name)}}
-        run: ./.github/scripts/createPRWithLabels.sh
+        run: |
+          TARGETS=$(echo "$LABELS" | jq -r '.[] | select(startswith("propagate:")) | ltrimstr("propagate:")')
+
+          echo "$TARGETS" | while read -r target; do
+            echo "target is $target"
+          done
+          
          
