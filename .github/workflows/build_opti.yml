@@ -33,9 +33,10 @@ jobs:
             ~/.cargo/registry/cache
             ~/.cargo/git/db
             target
+            
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}${{ hashFiles('**/*.rs') }}
           restore-keys: ${{ runner.os }}-cargo-
-
+          
       - run: cargo clippy -- -D clippy::all
 
   check:
