@@ -18,5 +18,5 @@ jobs:
         run: |
           Ligne_TODOs=$(grep -rohE 'TODO \(#[0-9]+\).*')
           echo "$Ligne_TODOs"
-          ISSUES=$(gh issue list --state all --limit 1000 --json --jq '.[].number')
+          ISSUES=$(gh issue list --state all --limit 1000 --json number --jq '.[].number')
           echo "$ISSUES"
