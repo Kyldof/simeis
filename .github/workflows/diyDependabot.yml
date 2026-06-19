@@ -38,12 +38,28 @@ jobs:
 
       - name: Create Pull Request
         if: steps.cargo-update.outputs.has_changes == 'true'
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "update cargo dependencies"
-          title: "update cargo dependencies"
-          body: "Ceci est une Pull Request automatique Pour update les dépendances du projet"
-          branch: "diy-dependabot/update-deps"
-          base: main
-          labels: "bot/update"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Configuration de git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Creer ou mettre a jour la branche de mise a jour
+          git checkout -B diy-dependabot/update-deps
+
+          # Commiter le Cargo.lock mis a jour
+          git add Cargo.lock
+          git commit -m "Mise à jour du cargo update"
+
+          # Pousser la branche (force pour ecraser si elle existe deja)
+          git push origin diy-dependabot/update-deps --force
+
+          # Creer la PR si elle n'existe pas encore, sinon ignorer silencieusement
+          gh pr create \
+            --title "Mise à jour du cargo update" \
+            --body "Ceci est une Pull Request automatique pour mettre à jour les dépendances du projet." \
+            --base main \
+            --head diy-dependabot/update-deps \
+            --label "bot/update" \
+            || echo "PR deja existante, pas de nouvelle creation"

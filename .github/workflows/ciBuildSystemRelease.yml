@@ -2,7 +2,7 @@ name: CI - Release & Documentation
 
 # Se declenche uniquement quand un push arrive sur main (= quand une PR est mergee)
 on:
-  push:
+  pull_request:
     branches:
       - main
   workflow_dispatch:
