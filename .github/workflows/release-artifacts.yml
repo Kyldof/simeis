@@ -10,7 +10,7 @@ on:
 
 jobs:
   main:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Acquire code
         uses: actions/checkout@v4
