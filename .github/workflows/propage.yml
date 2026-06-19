@@ -20,5 +20,5 @@ jobs:
         env:
             LABELS: ${{toJson(github.event.pull_request.labels.*.name)}}
         run: |
-         for label un $LABELS; do
+         for label in $LABELS; do
             echo "toto is $label"
