@@ -18,6 +18,7 @@ jobs:
       - name: Install Rust
         run: |
           sudo apt update && sudo apt install rustup
+          rustup toolchain install stable
 
       - name: Put commit hash/name in env variables
         run: |
