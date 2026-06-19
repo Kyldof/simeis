@@ -1,7 +1,8 @@
 name: diyDependabot
 
-# Se lance tous les lundis à 10h UTC automatiquement, ou manuellement depuis GitHub schedule:  - cron: "0 10 * * 1"
+# TODO: remettre le schedule apres les tests - cron: "0 10 * * 1" (tous les lundis à 10h UTC)
 on:
+  push:
   workflow_dispatch:
 
 jobs:
