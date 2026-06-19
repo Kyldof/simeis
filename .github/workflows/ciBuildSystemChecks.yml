@@ -2,7 +2,7 @@ name: CI - Checks & Tests
 
 # Se declenche sur toutes les PR qui ciblent main (et les autres branches si besoin)
 on:
-  pull_request:
+  push:
     branches:
       - main
 
