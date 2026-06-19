@@ -12,11 +12,13 @@ jobs:
           env:
             LABELS: ${{toJson(github.event.pull_request.labels.*.name)}}
           run: echo "labels :/ $LABELS"
-  echo_test:
+  propagate_with_label:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'bug/')
+    # if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'bug/')
     steps:
       - name: echo test for test
         env:
-            LABELS: ${{toJson(github.event.pull_request.labels)}}
-        run: echo "test"
+            LABELS: ${{toJson(github.event.pull_request.labels.*.name)}}
+        run: |
+         for label un $LABELS; do
+            echo "toto is $label"
