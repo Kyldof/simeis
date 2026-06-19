@@ -3,6 +3,7 @@ on:
   pull_request:
     types: [closed]
 permissions:
+  contents: read
   pull-requests: write
 jobs:
   echo_test_information:
@@ -18,9 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'bug/')
     steps:
-      - name: echo test for test
+      - name: créer les PR de propagation
         env:
+            GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
             HEAD_REF: ${{github.head_ref}}
+            GH_REPO: ${{github.repository}}
             LABELS: ${{toJson(github.event.pull_request.labels.*.name)}}
         run: |
           TARGETS=$(echo "$LABELS" | jq -r '.[] | select(startswith("propagate:")) | ltrimstr("propagate:")')
@@ -30,7 +33,7 @@ jobs:
               gh pr create \
                 --base "$target" \
                 --head "$HEAD_REF" \
-                --title "$target"
+                --title "$target"                
             done
           fi
 
