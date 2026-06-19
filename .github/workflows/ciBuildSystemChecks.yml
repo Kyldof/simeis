@@ -2,7 +2,7 @@ name: CI - Checks & Tests
 
 # Se declenche sur toutes les PR qui ciblent main
 on:
-  push:
+  pull_request:
     branches:
       - main
   workflow_dispatch:
