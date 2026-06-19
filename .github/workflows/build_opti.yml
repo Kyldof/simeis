@@ -13,32 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Rust
-        run: |
-          rustup toolchain install stable
-          rustup default stable
-          rustup component add clippy
-
-      - uses: actions/cache@v5
-        with:
-          path: |
-            ~/.cargo/bin
-            ~/.cargo/registry/index
-            ~/.cargo/registry/cache
-            ~/.cargo/git/db
-            target
-            
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}${{ hashFiles('**/*.rs') }}
-          restore-keys: ${{ runner.os }}-cargo-
-          
-      - run: cargo clippy -- -D clippy::all
-
+  # Check formatage et lint
   check:
     runs-on: ubuntu-latest
 
@@ -62,10 +37,13 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}${{ hashFiles('**/*.rs') }}
           restore-keys: ${{ runner.os }}-cargo-
 
+      # Check Formatage
       - run: cargo fmt --check
+      # Check Lint
+      - run: cargo clippy -- -D clippy::all
 
   build-release:
-    needs: [check, lint]
+    needs: [check]
 
     runs-on: ${{ matrix.os }}
 
