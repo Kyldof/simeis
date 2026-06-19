@@ -1,6 +1,7 @@
 name: propage changement
 on:
   pull_request:
+    types: [closed]
 jobs:
   echo_base_head:
     runs-on : ubuntu-latest
@@ -9,7 +10,7 @@ jobs:
           run: "echo head :/ ${{github.head_ref}}/t base :/ ${{github.base_ref}}"
   echo_test:
     runs-on: ubuntu-latest
-    if: startsWith(github.head_ref, 'bug/**')
+    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'bug/')
     steps:
       - name: echo test for test
         run: echo "test"
