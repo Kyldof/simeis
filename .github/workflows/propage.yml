@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: echo test for test
         env:
-            LABELS: ${{toJson(github.event.pull_request.labels.*.name)}}
+            LABELS: ${{github.event.pull_request.labels.*.name}}
         run: |
          for label in $LABELS; do
             echo "toto is $label"
