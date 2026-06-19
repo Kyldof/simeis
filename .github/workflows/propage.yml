@@ -19,7 +19,5 @@ jobs:
       - name: echo test for test
         env:
             LABELS: ${{toJson(github.event.pull_request.labels.*.name)}}
-        run: |
-         echo "$LABELS" | jq -r '.[]' | while read -r label; do
-            echo "toto is $label"
-         done
+        run: ./.github/scripts/createPRWithLabels.sh
+         
