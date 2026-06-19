@@ -2,6 +2,8 @@ name: diyDependabot
 
 # TODO: remettre le schedule apres les tests - cron: "0 10 * * 1" (tous les lundis à 10h UTC)
 on:
+  schedule:
+    - cron: "0 10 * * 1"
   push:
   workflow_dispatch:
 
@@ -12,12 +14,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          ref: main
+        run: git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git . && git checkout main
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
       - name: Run cargo update
         id: cargo-update

@@ -2,7 +2,7 @@ name: CI - Release & Documentation
 
 # Se declenche uniquement quand un push arrive sur main (= quand une PR est mergee)
 on:
-  push:
+  pull_request:
     branches:
       - main
   workflow_dispatch:
@@ -13,19 +13,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        run: git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git . && git checkout ${{ github.sha }}
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache cargo deps
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-release-${{ hashFiles('**/Cargo.lock') }}
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
       - name: Install Typst
         run: |
