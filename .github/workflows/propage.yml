@@ -1,16 +1,22 @@
 name: propage changement
 on:
   pull_request:
-    types: [closed]
+    # types: [closed]
 jobs:
-  echo_base_head:
+  echo_test_information:
     runs-on : ubuntu-latest
     steps:
         - name: echo base and head github
           run: "echo head :/ ${{github.head_ref}}/t base :/ ${{github.base_ref}}"
+        - name: afficher labels
+          env:
+            LABELS: ${{toJson(github.event.pull_request.labels)}}
+          run: echo "labels :/ $LABELS"
   echo_test:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'bug/')
     steps:
       - name: echo test for test
+        env:
+            LABELS: ${{toJson(github.event.pull_request.labels)}}
         run: echo "test"
