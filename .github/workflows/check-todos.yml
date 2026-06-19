@@ -1,0 +1,19 @@
+name: verifier les TODO
+
+on: [push, pull_request]
+
+permissions:
+  issues: read
+
+jobs:
+  check_todos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: verifier que chaque TODO est lié à une issue ouverte
+        env:
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GH_REPO: ${{github.repository}}
+        run: |
+          rg 'TODO \(#\d+\)'
