@@ -1,7 +1,7 @@
 name: propage changement
 on:
   pull_request:
-    # types: [closed]
+    types: [closed]
 permissions:
   pull-requests: write
 jobs:
@@ -16,7 +16,7 @@ jobs:
           run: echo "$LABELS" | jq -r '.[]'
   propagate_with_label:
     runs-on: ubuntu-latest
-    # if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'bug/')
+    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'bug/')
     steps:
       - name: echo test for test
         env:
