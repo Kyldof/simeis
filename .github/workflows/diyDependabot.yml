@@ -1,9 +1,7 @@
 name: diyDependabot
 
-# Se lance tous les lundis à 10h UTC automatiquement, ou manuellement depuis GitHub
+# Se lance tous les lundis à 10h UTC automatiquement, ou manuellement depuis GitHub schedule:  - cron: "0 10 * * 1"
 on:
-  schedule:
-    - cron: "0 10 * * 1"
   workflow_dispatch:
 
 jobs:
