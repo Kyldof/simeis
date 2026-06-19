@@ -10,7 +10,7 @@ jobs:
           run: "echo head :/ ${{github.head_ref}}/t base :/ ${{github.base_ref}}"
         - name: afficher labels
           env:
-            LABELS: ${{toJson(github.event.pull_request.labels)}}
+            LABELS: ${{toJson(github.event.pull_request.labels.*.name)}}
           run: echo "labels :/ $LABELS"
   echo_test:
     runs-on: ubuntu-latest
