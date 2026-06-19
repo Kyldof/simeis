@@ -1,0 +1,32 @@
+name: propage changement
+on:
+  pull_request:
+    types: [closed]
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  propagate_with_label:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'bug/')
+    steps:
+      - name: créer les PR de propagation
+        env:
+            GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+            HEAD_REF: ${{github.head_ref}}
+            GH_REPO: ${{github.repository}}
+            LABELS: ${{toJson(github.event.pull_request.labels.*.name)}}
+        run: |
+          TARGETS=$(echo "$LABELS" | jq -r '.[] | select(startswith("propagate:")) | ltrimstr("propagate:")')
+
+          if [ -n "$TARGETS" ]; then
+            echo "$TARGETS" | while read -r target; do
+              gh pr create \
+                --base "$target" \
+                --head "$HEAD_REF" \
+                --title "$target"  \
+                --body "PR auto-générée pour propager les changements de $HEAD_REF vers $target"
+            done
+          fi
+
+         
