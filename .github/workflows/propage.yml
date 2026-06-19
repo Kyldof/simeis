@@ -20,6 +20,6 @@ jobs:
         env:
             LABELS: ${{toJson(github.event.pull_request.labels.*.name)}}
         run: |
-         for label in $LABELS | jq -r '.[]'; do
+         echo "$LABELS" | jq -r '.[]' | while read -r label; do
             echo "toto is $label"
          done
