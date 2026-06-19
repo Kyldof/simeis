@@ -1,6 +1,6 @@
 name: CI - Release & Documentation
 
-# Se declenche uniquement quand un push arrive sur main (= quand une PR est mergee)
+# Se lance quand une PR est mergée sur main
 on:
   push:
     branches:

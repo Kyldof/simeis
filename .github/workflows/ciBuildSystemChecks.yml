@@ -1,6 +1,6 @@
 name: CI - Checks & Tests
 
-# Se declenche sur toutes les PR qui ciblent main
+# Se lance sur les PR qui ciblent main
 on:
   pull_request:
     branches:

@@ -1,6 +1,6 @@
 name: diyDependabot
 
-# TODO: remettre le schedule apres les tests - cron: "0 10 * * 1" (tous les lundis à 10h UTC)
+# Tous les lundis à 10h UTC
 on:
   schedule:
     - cron: "0 10 * * 1"
@@ -12,7 +12,6 @@ permissions:
   pull-requests: write
 
 jobs:
-  # Met à jour les dépendances Rust et crée une PR si y'a des changements
   Mise-a-jour-des-dependances:
     runs-on: ubuntu-latest
 
@@ -29,7 +28,6 @@ jobs:
         id: cargo-update
         run: |
           cargo update 2>&1 | tee cargo-update.log
-          # On detecte si Cargo.lock a ete modifie apres cargo update
           if git diff --quiet Cargo.lock; then
             echo "has_changes=false" >> $GITHUB_OUTPUT
           else
@@ -41,25 +39,16 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Configuration de git
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Creer ou mettre a jour la branche de mise a jour
           git checkout -B diy-dependabot/update-deps
-
-          # Commiter le Cargo.lock mis a jour
           git add Cargo.lock
           git commit -m "Mise à jour du cargo update"
-
-          # Pousser la branche (force pour ecraser si elle existe deja)
           git push origin diy-dependabot/update-deps --force
-
-          # Creer la PR si elle n'existe pas encore, sinon ignorer silencieusement
           gh pr create \
             --title "Mise à jour du cargo update" \
             --body "Ceci est une Pull Request automatique pour mettre à jour les dépendances du projet." \
             --base main \
             --head diy-dependabot/update-deps \
             --label "bot/update" \
-            || echo "PR deja existante, pas de nouvelle creation"
+            || echo "PR déjà existante"

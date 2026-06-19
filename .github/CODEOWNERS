@@ -1,32 +1,28 @@
-# CODEOWNERS - Définit les propriétaires de chaque partie du code
-# Ces propriétaires seront automatiquement assignés en tant que reviewers
-# sur toute Pull Request modifiant les fichiers correspondants.
-#
-# Syntaxe : <pattern>  <owner1> <owner2> ...
-# Documentation : https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# Propriétaires du code par zone
+# Assignés automatiquement en reviewer sur les PR qui touchent ces fichiers
 
-# --- Propriétaire par défaut (toutes les parties non spécifiées) ---
+# Par défaut
 *                           @Kyldof
 
-# --- Système de build et CI ---
+# CI et build
 Makefile                    @Kyldof
 .github/                    @Kyldof
 
-# --- Code serveur (simeis-server) ---
+# Serveur
 simeis-server/              @Kyldof
 
-# --- Données / modèles (simeis-data) ---
+# Données
 simeis-data/                @Kyldof
 
-# --- SDK ---
+# SDK
 sdk/                        @Kyldof
 
-# --- Documentation ---
+# Documentation
 doc/                        @Kyldof
 
-# --- Tests d'intégration ---
+# Tests
 tests/                      @Kyldof
 
-# --- Configuration Cargo (dépendances) ---
+# Dépendances
 Cargo.toml                  @Kyldof
 Cargo.lock                  @Kyldof
